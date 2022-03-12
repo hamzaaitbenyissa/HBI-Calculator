@@ -7,15 +7,16 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import tk.pratanumandal.expr4j.ExpressionEvaluator;
+import net.objecthunter.exp4j.Expression;
+import net.objecthunter.exp4j.ExpressionBuilder;
+import net.objecthunter.exp4j.ValidationResult;
+
+
 
 public class MainActivity extends AppCompatActivity {
 
     Button btn_1, btn_2, btn_3, btn_4, btn_5, btn_6, btn_7, btn_8, btn_9, btn_0, btn_Add, btn_Sub, btn_Mul, btn_Div, btn_calc, btn_dec, btn_clear;
     EditText ed1;
-    float Value1, Value2;
-    boolean mAddition, mSubtract, mMultiplication, mDivision;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -151,12 +152,16 @@ public class MainActivity extends AppCompatActivity {
         btn_calc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                String expr = ed1.getText().toString();
-                ExpressionEvaluator exprEval = new ExpressionEvaluator();
-                double result = exprEval.evaluate(expr);
-                ed1.setText(result + "");
-
+                try {
+                    Expression exp = new ExpressionBuilder(ed1.getText().toString()).build();
+                    ValidationResult res = exp.validate();
+                    if (res.isValid()) {
+                        double result = exp.evaluate();
+                        ed1.setText(result + "");
+                    }
+                } catch (Exception exc) {
+                    ed1.setText("");
+                }
             }
         });
 
